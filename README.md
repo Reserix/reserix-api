@@ -47,7 +47,7 @@ Reserix addresses this using a combination of:
 
 Core components:
 
-- API Server (Kotlin + Spring Boot)
+- API Server (Java + Spring Boot)
 - Redis (Locking & caching)
 - PostgreSQL (source of truth)
 - Queue system (reservation ordering)
