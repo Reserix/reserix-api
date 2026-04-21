@@ -60,7 +60,9 @@ Core components:
 flowchart TD
     A[AVAILABLE] --> | user starts reservation | B{LOCKED}
     B -->|payment success| C[CONFIRMED]
-    B -->|timeout or payment failure or user abandonment| D[EXPIRED]
+    B -->|timeout,
+     payment failure,
+     user abandonment| D[EXPIRED]
     D --> A
 ```
 
