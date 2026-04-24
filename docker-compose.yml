@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: reserix-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: reserix_db
+      POSTGRES_USER: reserix_user
+      POSTGRES_PASSWORD: reserix_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - reserix-network
+
+  redis:
+    image: redis:7
+    container_name: reserix-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - reserix-network
+    command: redis-server --appendonly yes
+
+volumes:
+  postgres_data:
+  redis_data:
+networks:
+  reserix-network:
+    driver: bridge
