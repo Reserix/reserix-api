@@ -1,3 +1,6 @@
 spring:
   application:
     name: reserix-api
+
+  profiles:
+    active: dev
