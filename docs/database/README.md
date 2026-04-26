@@ -27,6 +27,7 @@ erDiagram
     THEATER {
         int id PK
         string name
+        string address
         datetime created_at
         datetime updated_at
     }
@@ -51,8 +52,8 @@ erDiagram
   
     SCREENING {
         int id PK
-        int movie_id UK, FK
-        int room_id UK, FK
+        int movie_id FK
+        int room_id FK
         datetime start_time
         datetime end_time
         int status
@@ -73,7 +74,7 @@ erDiagram
     RESERVATION_SEAT {
         int id PK
         int reservation_id FK
-        int screen_id FK
+        int screening_id FK
         int seat_id FK
         int status
         datetime created_at
@@ -82,8 +83,8 @@ erDiagram
 
     PAYMENT {
         int id PK
-        int user_id FK, UK
-        int reservation_id FK, UK
+        int user_id FK
+        int reservation_id FK
         int status
         datetime created_at
         datetime updated_at
@@ -97,7 +98,19 @@ erDiagram
     USER ||--o{ RESERVATION : makes
     SCREENING ||--o{ RESERVATION : has
     RESERVATION ||--o{ RESERVATION_SEAT : contains
-    SEAT ||--o{ RESERVATION_SEAT : selected
-
     RESERVATION ||--o| PAYMENT : paid_by
+    SEAT ||--o{ RESERVATION_SEAT : selected
 ```
+
+## Constraints
+- USER UNIQUE(email)
+- SEAT UNIQUE(room_id, row_number, column_number)
+- RESERVATION UNIQUE(id, screening_id)
+- RESERVATION_SEAT UNIQUE(screening_id, seat_id)
+- RESERVATION_SEAT FK(reservation_id, screening_id) → RESERVATION(id, screening_id)
+- PAYMENT UNIQUE(reservation_id)
+- ROOM UNIQUE(theater_id, name)
+- THEATER UNIQUE(address, name)
+- SCREENING UNIQUE(room_id, start_time)
+- SCREENING must not overlap in same room
+
