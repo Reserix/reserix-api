@@ -10,6 +10,9 @@ import lombok.Getter;
         name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"email"})
+        },
+        indexes = {
+                @Index(name = "idx_users_status", columnList = "status")
         }
 )
 public class User extends BaseEntity {
