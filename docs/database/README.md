@@ -45,7 +45,7 @@ erDiagram
         int room_id FK 
         int row_number
         int column_number
-        int seat_type
+        enum seat_type
         datetime created_at
         datetime updated_at
     }
@@ -56,7 +56,7 @@ erDiagram
         int room_id FK
         datetime start_time
         datetime end_time
-        int status
+        enum status
         datetime created_at
         datetime updated_at
     }
@@ -65,7 +65,7 @@ erDiagram
         int id PK
         int user_id FK
         int screening_id FK
-        int status
+        enum status
         datetime expire_at
         datetime created_at
         datetime updated_at
@@ -76,7 +76,7 @@ erDiagram
         int reservation_id FK
         int screening_id FK
         int seat_id FK
-        int status
+        enum status
         datetime created_at
         datetime updated_at
     }
@@ -85,7 +85,7 @@ erDiagram
         int id PK
         int user_id FK
         int reservation_id FK
-        int status
+        enum status
         datetime created_at
         datetime updated_at
     }
