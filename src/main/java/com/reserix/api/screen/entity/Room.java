@@ -26,11 +26,19 @@ public class Room extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "row_count", nullable = false)
+    private Integer rowCount;
+
+    @Column(name = "column_count", nullable = false)
+    private Integer columnCount;
+
     protected Room() {
     }
 
-    public Room(Theater theater, String name) {
+    public Room(Theater theater, String name, Integer rowCount, Integer columnCount) {
         this.theater = theater;
         this.name = name;
+        this.rowCount = rowCount;
+        this.columnCount = columnCount;
     }
 }

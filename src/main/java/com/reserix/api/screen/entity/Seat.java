@@ -39,5 +39,6 @@ public class Seat extends BaseEntity {
         this.room = room;
         this.rowNumber = rowNumber;
         this.columnNumber = columnNumber;
+        this.seatType = SeatType.STANDARD;
     }
 }
