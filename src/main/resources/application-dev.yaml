@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+jwt:
+  secret: "secret999999999999999999999999999999999999999999999999999999"
+  access-token-expiration-ms: 3600000
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/reserix_db

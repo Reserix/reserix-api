@@ -30,10 +30,10 @@ public class Screening extends BaseEntity {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
     @Enumerated(EnumType.STRING)
@@ -45,10 +45,14 @@ public class Screening extends BaseEntity {
     }
 
     public Screening(Movie movie, Room room, LocalDateTime startTime, LocalDateTime endTime) {
+        this(movie, room, startTime, endTime, ScreeningStatus.SCHEDULED);
+    }
+
+    public Screening(Movie movie, Room room, LocalDateTime startTime, LocalDateTime endTime, ScreeningStatus status) {
         this.movie = movie;
         this.room = room;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.status = ScreeningStatus.SCHEDULED;
+        this.status = status;
     }
 }

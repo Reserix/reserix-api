@@ -9,7 +9,7 @@ erDiagram
         string email UK
         string username
         string password
-        int role
+        enum role
         enum status
         datetime created_at
         datetime updated_at
