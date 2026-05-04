@@ -1,5 +1,6 @@
 package com.reserix.api.screen.dto;
 
+import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.screen.entity.SeatType;
 
 public record SeatStatusResponse(
@@ -7,6 +8,6 @@ public record SeatStatusResponse(
         Integer rowNumber,
         Integer columnNumber,
         SeatType seatType,
-        Boolean status
+        ReservationSeatStatus status
 ) {
 }

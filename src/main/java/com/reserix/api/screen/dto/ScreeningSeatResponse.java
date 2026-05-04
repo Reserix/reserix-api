@@ -1,9 +1,11 @@
 package com.reserix.api.screen.dto;
 
 import com.reserix.api.reservation.entity.ReservationSeat;
+import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.Seat;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,13 +21,19 @@ public record ScreeningSeatResponse(
                 .map(reservationSeat -> reservationSeat.getSeat().getId())
                 .collect(Collectors.toSet());
 
+        Map<Long, ReservationSeatStatus> reservedSeatStatusMap = reservationSeats.stream()
+                .collect(Collectors.toMap(
+                        rs -> rs.getSeat().getId(),
+                        ReservationSeat::getStatus
+                ));
+
         List<SeatStatusResponse> seatsStatus = seats.stream()
                 .map(seat -> new SeatStatusResponse(
                         seat.getId(),
                         seat.getRowNumber(),
                         seat.getColumnNumber(),
                         seat.getSeatType(),
-                        reservedSeatIds.contains(seat.getId())
+                        reservedSeatIds.contains(seat.getId()) ? reservedSeatStatusMap.get(seat.getId()) : ReservationSeatStatus.AVAILABLE
                 ))
                 .toList();
 
