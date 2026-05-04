@@ -2,6 +2,7 @@ package com.reserix.api.screen.controller;
 
 import com.reserix.api.screen.dto.ScreeningCreateRequest;
 import com.reserix.api.screen.dto.ScreeningResponse;
+import com.reserix.api.screen.dto.ScreeningSeatResponse;
 import com.reserix.api.screen.service.ScreeningService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,12 @@ public class ScreeningController {
     @GetMapping
     public List<ScreeningResponse> getAll() {
         return screeningService.getAll();
+    }
+
+    @GetMapping("{screeningId}/seats")
+    public ScreeningSeatResponse getSeatStatus(
+            @PathVariable Long screeningId
+    ) {
+        return screeningService.getSeatStatus(screeningId);
     }
 }

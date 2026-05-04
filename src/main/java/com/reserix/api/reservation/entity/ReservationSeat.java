@@ -1,6 +1,7 @@
 package com.reserix.api.reservation.entity;
 
 import com.reserix.api.common.entity.BaseEntity;
+import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.Seat;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,6 +27,11 @@ public class ReservationSeat extends BaseEntity {
     })
     private Reservation reservation;
 
+    // FK: reservation_seats.screening_id -> screenings.id
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "screening_id", nullable = false)
+    private Screening screening;
+
     // FK: reservation_seats.seat_id -> seats.id
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "seat_id", nullable = false)
@@ -41,6 +47,7 @@ public class ReservationSeat extends BaseEntity {
 
     public ReservationSeat(Reservation reservation, Seat seat) {
         this.reservation = reservation;
+        this.screening = reservation.getScreening();
         this.seat = seat;
         this.status = ReservationSeatStatus.LOCKED;
     }

@@ -1,9 +1,12 @@
 package com.reserix.api.screen.entity;
 
 import com.reserix.api.common.entity.BaseEntity;
-import com.reserix.api.theater.entity.Theater;
 import jakarta.persistence.*;
+import lombok.Getter;
 
+import javax.net.ssl.SSLSession;
+
+@Getter
 @Entity
 @Table(
         name = "seats",
