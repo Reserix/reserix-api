@@ -1,6 +1,6 @@
 package com.reserix.api.user.service;
 
-import com.reserix.api.user.dto.UserCreateRequest;
+import com.reserix.api.user.dto.UserCreateByAdminRequest;
 import com.reserix.api.user.dto.UserResponse;
 import com.reserix.api.user.entity.User;
 import com.reserix.api.user.repository.UserRepository;
@@ -19,7 +19,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserResponse createUser(UserCreateRequest request) {
+    public UserResponse createUser(UserCreateByAdminRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("email already exists");
         }
@@ -29,7 +29,8 @@ public class UserService {
         User user = new User(
                 request.email(),
                 request.username(),
-                encodedPassword
+                encodedPassword,
+                request.role()
         );
 
         User savedUser = userRepository.save(user);

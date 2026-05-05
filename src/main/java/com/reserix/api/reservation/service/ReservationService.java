@@ -40,7 +40,7 @@ public class ReservationService {
 
     @Transactional(rollbackFor = Exception.class)
     public ReservationResponse createReservation(ReservationCreateRequest request, Long userId) {
-        Screening screening = screeningRepository.findById(request.screenId())
+        Screening screening = screeningRepository.findById(request.screeningId())
                 .orElseThrow(() -> new IllegalArgumentException("Screening not found"));
 
         List<Long> seatIds = request.seatIds();
@@ -69,7 +69,7 @@ public class ReservationService {
         }
 
         // 3. Check if the seats are reserved or not.
-        List<Long> reservedSeatIds = reservationSeatRepository.findReservedSeatIds(request.screenId(),seatIds);
+        List<Long> reservedSeatIds = reservationSeatRepository.findReservedSeatIds(request.screeningId(),seatIds);
 
         if (!reservedSeatIds.isEmpty()) {
             throw new IllegalArgumentException("Already reserved seats: " + reservedSeatIds);

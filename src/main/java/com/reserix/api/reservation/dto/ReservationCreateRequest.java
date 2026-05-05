@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record ReservationCreateRequest(
-        @NotNull(message = "screenId is required")
-        Long screenId,
+        @NotNull(message = "screeningId is required")
+        Long screeningId,
 
         @NotEmpty(message = "seatIds must not be empty")
         List<Long> seatIds

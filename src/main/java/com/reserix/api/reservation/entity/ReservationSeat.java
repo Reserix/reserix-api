@@ -21,10 +21,11 @@ public class ReservationSeat extends BaseEntity {
 
     // FK: reservation_seats.reservation_id -> reservations.id
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumns({
-            @JoinColumn(name = "reservation_id", referencedColumnName = "id", nullable = false),
-            @JoinColumn(name = "screeing_id", referencedColumnName = "screening_id", nullable = false)
-    })
+//    @JoinColumns({
+//            @JoinColumn(name = "reservation_id", referencedColumnName = "id", nullable = false),
+//            @JoinColumn(name = "screening_id", referencedColumnName = "screening_id", insertable = false, updatable = false, nullable = false)
+//    })
+    @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
     // FK: reservation_seats.screening_id -> screenings.id

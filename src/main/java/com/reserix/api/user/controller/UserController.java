@@ -1,5 +1,6 @@
 package com.reserix.api.user.controller;
 
+import com.reserix.api.user.dto.UserCreateByAdminRequest;
 import com.reserix.api.user.dto.UserCreateRequest;
 import com.reserix.api.user.dto.UserResponse;
 import com.reserix.api.user.service.UserService;
@@ -17,7 +18,7 @@ public class UserController {
 
     @PostMapping
     public UserResponse createUser(
-            @Valid @RequestBody UserCreateRequest request
+            @Valid @RequestBody UserCreateByAdminRequest request
             ) {
         return userService.createUser(request);
     }

@@ -4,7 +4,7 @@ import com.reserix.api.user.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record UserCreateRequest(
+public record UserCreateByAdminRequest(
         @Email
         @NotBlank(message = "email is required")
         String email,
@@ -13,6 +13,9 @@ public record UserCreateRequest(
         String username,
 
         @NotBlank(message = "password is required")
-        String password
+        String password,
+
+        @NotBlank(message = "role is required")
+        UserRole role
 ) {
 }
