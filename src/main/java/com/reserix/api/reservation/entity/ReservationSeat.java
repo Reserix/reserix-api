@@ -50,6 +50,6 @@ public class ReservationSeat extends BaseEntity {
         this.reservation = reservation;
         this.screening = reservation.getScreening();
         this.seat = seat;
-        this.status = ReservationSeatStatus.LOCKED;
+        this.status = ReservationSeatStatus.PENDING;
     }
 }

@@ -1,5 +1,7 @@
 package com.reserix.api.reservation.service;
 
+import com.reserix.api.common.exception.BusinessException;
+import com.reserix.api.common.exception.ErrorCode;
 import com.reserix.api.reservation.dto.ReservationCreateRequest;
 import com.reserix.api.reservation.dto.ReservationResponse;
 import com.reserix.api.reservation.entity.Reservation;
@@ -37,6 +39,7 @@ public class ReservationService {
     private final Integer SEAT_LOCK_TIME = 5;
 
     private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
+    private final SeatLockService seatLockService;
 
     @Transactional(rollbackFor = Exception.class)
     public ReservationResponse createReservation(ReservationCreateRequest request, Long userId) {
@@ -78,6 +81,9 @@ public class ReservationService {
         // 4. Create reservation
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not exists"));
+
+        seatLockService.lockSeats(request.screeningId(), seatIds, userId);
+
         try {
             Reservation reservation = new Reservation(
                     user,
