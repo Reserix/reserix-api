@@ -9,7 +9,7 @@ erDiagram
         string email UK
         string username
         string password
-        int role
+        enum role
         enum status
         datetime created_at
         datetime updated_at
@@ -36,6 +36,8 @@ erDiagram
         int id PK
         int theater_id FK
         string name
+        int row_count
+        int column_count
         datetime created_at
         datetime updated_at
     }

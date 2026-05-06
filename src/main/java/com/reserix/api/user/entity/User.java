@@ -10,6 +10,9 @@ import lombok.Getter;
         name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"email"})
+        },
+        indexes = {
+                @Index(name = "idx_users_status", columnList = "status")
         }
 )
 public class User extends BaseEntity {
@@ -26,8 +29,29 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    private Integer role;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    protected User() {
+
+    }
+
+    public User(String email, String username, String password) {
+        this(email, username, password, UserRole.USER, UserStatus.ACTIVE);
+    }
+
+    public User(String email, String username, String password, UserRole role) {
+        this(email, username, password, role, UserStatus.ACTIVE);
+    }
+
+    public User(String email, String username, String password, UserRole role, UserStatus status) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.status = status;
+    }
 }

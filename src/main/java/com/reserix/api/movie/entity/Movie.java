@@ -24,4 +24,14 @@ public class Movie extends BaseEntity {
 
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
+
+    protected Movie() {
+
+    }
+
+    public Movie(String title, String description, Integer durationMinutes) {
+        this.title = title;
+        this.description = description;
+        this.durationMinutes = durationMinutes;
+    }
 }

@@ -1,6 +1,7 @@
 package com.reserix.api.reservation.entity;
 
 import com.reserix.api.common.entity.BaseEntity;
+import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.Seat;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,11 +21,17 @@ public class ReservationSeat extends BaseEntity {
 
     // FK: reservation_seats.reservation_id -> reservations.id
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumns({
-            @JoinColumn(name = "reservation_id", referencedColumnName = "id", nullable = false),
-            @JoinColumn(name = "screeing_id", referencedColumnName = "screening_id", nullable = false)
-    })
+//    @JoinColumns({
+//            @JoinColumn(name = "reservation_id", referencedColumnName = "id", nullable = false),
+//            @JoinColumn(name = "screening_id", referencedColumnName = "screening_id", insertable = false, updatable = false, nullable = false)
+//    })
+    @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
+
+    // FK: reservation_seats.screening_id -> screenings.id
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "screening_id", nullable = false)
+    private Screening screening;
 
     // FK: reservation_seats.seat_id -> seats.id
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -41,7 +48,8 @@ public class ReservationSeat extends BaseEntity {
 
     public ReservationSeat(Reservation reservation, Seat seat) {
         this.reservation = reservation;
+        this.screening = reservation.getScreening();
         this.seat = seat;
-        this.status = ReservationSeatStatus.LOCKED;
+        this.status = ReservationSeatStatus.PENDING;
     }
 }

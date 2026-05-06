@@ -58,12 +58,28 @@ Core components:
 
 ```mermaid
 flowchart TD
-    A[AVAILABLE] --> | user starts reservation | B{LOCKED}
-    B -->|payment success| C[CONFIRMED]
-    B -->|timeout,
-     payment failure,
-     user abandonment| D[EXPIRED]
-    D --> A
+    A[User selects seats] --> B[Try Redis Lock TTL 5min]
+
+    B -->|Lock Success| C[Create Reservation<br/>status = PENDING<br/>expireAt = now + 5min]
+    B -->|Lock Fail| Z[Reject - Seat already locked]
+
+    C --> D[User attempts payment]
+
+    D --> E{Is expireAt valid?}
+
+    E -->|No,<br/>Expired| F[Mark EXPIRED<br/>Release Redis Lock]
+    E -->|Yes| G{Payment result}
+
+    G -->|Success| H[Mark CONFIRMED<br/>Persist ReservationSeats<br/>Release Redis Lock]
+
+    G -->|Fail| I[Mark CANCELLED<br/>Release Redis Lock]
+
+    C --> J[Background Job / TTL Expiry]
+
+    J --> K{expireAt passed?}
+
+    K -->|Yes| L[Mark EXPIRED<br/>Release Redis Lock]
+    K -->|No| C
 ```
 
 - Seats are temporarily locked during reservation
