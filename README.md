@@ -67,7 +67,7 @@ flowchart TD
 
     D --> E{Is expireAt valid?}
 
-    E -->|No expired| F[Mark EXPIRED<br/>Release Redis Lock]
+    E -->|No,<br/>Expired| F[Mark EXPIRED<br/>Release Redis Lock]
     E -->|Yes| G{Payment result}
 
     G -->|Success| H[Mark CONFIRMED<br/>Persist ReservationSeats<br/>Release Redis Lock]
