@@ -38,6 +38,9 @@ public class ReservationSeat extends BaseEntity {
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
+    @Column(nullable = false)
+    private Integer price;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationSeatStatus status;

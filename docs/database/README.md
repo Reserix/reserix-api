@@ -63,6 +63,15 @@ erDiagram
         datetime updated_at
     }
     
+    SCREENING_PRICE {
+        int id PK
+        int screening_id FK
+        enum seat_type
+        int price
+        datetime created_at
+        datetime updated_at
+    }
+    
     RESERVATION {
         int id PK
         int user_id FK
@@ -78,6 +87,7 @@ erDiagram
         int reservation_id FK
         int screening_id FK
         int seat_id FK
+        int price
         enum status
         datetime created_at
         datetime updated_at
@@ -85,7 +95,6 @@ erDiagram
 
     PAYMENT {
         int id PK
-        int user_id FK
         int reservation_id FK
         enum status
         datetime created_at
@@ -99,6 +108,7 @@ erDiagram
 
     USER ||--o{ RESERVATION : makes
     SCREENING ||--o{ RESERVATION : has
+    SCREENING ||--o{ SCREENING_PRICE : has
     RESERVATION ||--o{ RESERVATION_SEAT : contains
     RESERVATION ||--o| PAYMENT : paid_by
     SEAT ||--o{ RESERVATION_SEAT : selected
@@ -115,4 +125,10 @@ erDiagram
 - THEATER UNIQUE(address, name)
 - SCREENING UNIQUE(room_id, start_time)
 - SCREENING must not overlap in same room
-
+- SCREENING_PRICE UNIQUE(screening_id, seat_type)
+  ```sql
+    CREATE UNIQUE INDEX uq_active_seat
+    ON reservation_seats(screening_id, seat_id)
+    WHERE status IN ('PENDING', 'CONFIRMED');
+  ```
+  
