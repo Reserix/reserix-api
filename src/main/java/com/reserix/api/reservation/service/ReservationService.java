@@ -1,7 +1,5 @@
 package com.reserix.api.reservation.service;
 
-import com.reserix.api.common.exception.BusinessException;
-import com.reserix.api.common.exception.ErrorCode;
 import com.reserix.api.reservation.dto.ReservationCreateRequest;
 import com.reserix.api.reservation.dto.ReservationResponse;
 import com.reserix.api.reservation.entity.Reservation;
@@ -9,7 +7,9 @@ import com.reserix.api.reservation.entity.ReservationSeat;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
 import com.reserix.api.screen.entity.Screening;
+import com.reserix.api.screen.entity.ScreeningPrice;
 import com.reserix.api.screen.entity.Seat;
+import com.reserix.api.screen.entity.SeatType;
 import com.reserix.api.screen.repository.ScreeningRepository;
 import com.reserix.api.screen.repository.SeatRepository;
 import com.reserix.api.user.entity.User;
@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,11 +95,23 @@ public class ReservationService {
 
             Reservation savedReservation = reservationRepository.save(reservation);
 
+            // Get prices for screening seat
+            Map<SeatType, Integer> seatPrices = screening.getScreeningPrices()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            ScreeningPrice::getSeatType,
+                            ScreeningPrice::getPrice
+                    ));
+
             List<ReservationSeat> reservationSeats = new ArrayList<>();
             for (Seat seat : seats) {
+                // get price for seat
+                Integer seatPrice = seatPrices.get(seat.getSeatType());
+
                 ReservationSeat reservationSeat = new ReservationSeat(
                         savedReservation,
-                        seat
+                        seat,
+                        seatPrice
                 );
 
                 reservationSeats.add(reservationSeat);

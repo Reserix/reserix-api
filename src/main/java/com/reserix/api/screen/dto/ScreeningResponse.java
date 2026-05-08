@@ -1,9 +1,14 @@
 package com.reserix.api.screen.dto;
 
 import com.reserix.api.screen.entity.Screening;
+import com.reserix.api.screen.entity.ScreeningPrice;
 import com.reserix.api.screen.entity.ScreeningStatus;
+import com.reserix.api.screen.entity.SeatType;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public record ScreeningResponse(
         Long id,
@@ -23,10 +28,19 @@ public record ScreeningResponse(
 
         ScreeningStatus status,
 
+        Map<SeatType, Integer> seatPrices,
+
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
     public static ScreeningResponse from(Screening screening) {
+        Map<SeatType, Integer> seatPrices = screening.getScreeningPrices()
+                .stream()
+                .collect(Collectors.toMap(
+                        ScreeningPrice::getSeatType,
+                        ScreeningPrice::getPrice
+                ));
+
         return new ScreeningResponse(
                 screening.getId(),
 
@@ -44,6 +58,8 @@ public record ScreeningResponse(
                 screening.getEndTime(),
 
                 screening.getStatus(),
+
+                seatPrices,
 
                 screening.getCreatedAt(),
                 screening.getUpdatedAt()

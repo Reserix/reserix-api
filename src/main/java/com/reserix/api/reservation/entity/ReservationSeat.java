@@ -49,10 +49,11 @@ public class ReservationSeat extends BaseEntity {
 
     }
 
-    public ReservationSeat(Reservation reservation, Seat seat) {
+    public ReservationSeat(Reservation reservation, Seat seat, Integer price) {
         this.reservation = reservation;
         this.screening = reservation.getScreening();
         this.seat = seat;
+        this.price = price;
         this.status = ReservationSeatStatus.PENDING;
     }
 }
