@@ -1,9 +1,12 @@
 package com.reserix.api.reservation.service;
 
+import com.reserix.api.common.exception.BusinessException;
+import com.reserix.api.common.exception.ErrorCode;
 import com.reserix.api.reservation.dto.ReservationCreateRequest;
 import com.reserix.api.reservation.dto.ReservationResponse;
 import com.reserix.api.reservation.entity.Reservation;
 import com.reserix.api.reservation.entity.ReservationSeat;
+import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
 import com.reserix.api.screen.entity.Screening;
@@ -74,10 +77,17 @@ public class ReservationService {
         }
 
         // 3. Check if the seats are reserved or not.
-        List<Long> reservedSeatIds = reservationSeatRepository.findReservedSeatIds(request.screeningId(),seatIds);
+        List<Long> unavailableSeatIds = reservationSeatRepository.findUnavailableSeatIds(
+                request.screeningId(),
+                seatIds,
+                List.of(
+                        ReservationSeatStatus.PENDING,
+                        ReservationSeatStatus.CONFIRMED
+                )
+        );
 
-        if (!reservedSeatIds.isEmpty()) {
-            throw new IllegalArgumentException("Already reserved seats: " + reservedSeatIds);
+        if (!unavailableSeatIds.isEmpty()) {
+            throw new BusinessException(ErrorCode.CONFLICT, "Some seats are already reserved: " + unavailableSeatIds);
         }
 
         // 4. Create reservation

@@ -6,5 +6,6 @@ public enum ReservationSeatStatus {
     CONFIRMED,  // Confirmed (CONFIRMED)
     EXPIRED,    // Time expired
     CANCELLED,   // User canceled
-    FAILED          // Payment failed
+    FAILED,          // Payment failed
+    RELEASED,       // Seat released
 }

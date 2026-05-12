@@ -9,10 +9,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(
-        name = "reservation_seats",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"screening_id", "seat_id"})
-        }
+        name = "reservation_seats"
 )
 public class ReservationSeat extends BaseEntity {
     @Id
