@@ -12,6 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ReservationSeatRepository extends JpaRepository<ReservationSeat, Long> {
+
+    List<ReservationSeat> findByReservationId(Long reservationId);
+
     List<ReservationSeat> findReservationSeatsByScreening(Screening screening);
 
     @Query("""

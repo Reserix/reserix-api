@@ -1,6 +1,8 @@
 package com.reserix.api.reservation.entity;
 
 import com.reserix.api.common.entity.BaseEntity;
+import com.reserix.api.common.exception.BusinessException;
+import com.reserix.api.common.exception.ErrorCode;
 import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.Seat;
 import jakarta.persistence.*;
@@ -52,5 +54,21 @@ public class ReservationSeat extends BaseEntity {
         this.seat = seat;
         this.price = price;
         this.status = ReservationSeatStatus.PENDING;
+    }
+
+    public void confirm() {
+        if (this.status != ReservationSeatStatus.PENDING) {
+            throw new BusinessException(ErrorCode.CONFLICT, "Only pending seat can be confirmed");
+        }
+
+        this.status = ReservationSeatStatus.CONFIRMED;
+    }
+
+    public void release() {
+        if (this.status == ReservationSeatStatus.CONFIRMED) {
+            throw new BusinessException(ErrorCode.CONFLICT, "Confirmed seat cannot be released");
+        }
+
+        this.status = ReservationSeatStatus.RELEASED;
     }
 }
