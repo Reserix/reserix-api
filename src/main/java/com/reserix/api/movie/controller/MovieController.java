@@ -1,10 +1,13 @@
 package com.reserix.api.movie.controller;
 
+import com.reserix.api.common.response.ApiResponse;
 import com.reserix.api.movie.dto.MovieCreateRequest;
 import com.reserix.api.movie.dto.MovieResponse;
 import com.reserix.api.movie.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,21 +19,25 @@ public class MovieController {
     private final MovieService movieService;
 
     @PostMapping
-    public MovieResponse createMovie(
+    public ResponseEntity<ApiResponse<MovieResponse>> createMovie(
             @Valid @RequestBody MovieCreateRequest request
     ) {
-        return movieService.createMovie(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Movie created", movieService.createMovie(request)));
     }
 
     @GetMapping("/{movieId}")
-    public MovieResponse getMovieByID(
+    public ResponseEntity<ApiResponse<MovieResponse>> getMovieByID(
             @PathVariable Long movieId
     ) {
-        return movieService.getMovie(movieId);
+        return ResponseEntity
+                .ok(ApiResponse.success(movieService.getMovie(movieId)));
     }
 
     @GetMapping
-    public List<MovieResponse> getMovies() {
-        return movieService.getMovies();
+    public ResponseEntity<ApiResponse<List<MovieResponse>>> getMovies() {
+        return ResponseEntity
+                .ok(ApiResponse.success(movieService.getMovies()));
     }
 }

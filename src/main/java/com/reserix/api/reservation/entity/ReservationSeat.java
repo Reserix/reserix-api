@@ -1,6 +1,8 @@
 package com.reserix.api.reservation.entity;
 
 import com.reserix.api.common.entity.BaseEntity;
+import com.reserix.api.common.exception.BusinessException;
+import com.reserix.api.common.exception.ErrorCode;
 import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.Seat;
 import jakarta.persistence.*;
@@ -9,10 +11,7 @@ import lombok.Getter;
 @Getter
 @Entity
 @Table(
-        name = "reservation_seats",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"screening_id", "seat_id"})
-        }
+        name = "reservation_seats"
 )
 public class ReservationSeat extends BaseEntity {
     @Id
@@ -38,6 +37,9 @@ public class ReservationSeat extends BaseEntity {
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
+    @Column(nullable = false)
+    private Integer price;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationSeatStatus status;
@@ -46,10 +48,27 @@ public class ReservationSeat extends BaseEntity {
 
     }
 
-    public ReservationSeat(Reservation reservation, Seat seat) {
+    public ReservationSeat(Reservation reservation, Seat seat, Integer price) {
         this.reservation = reservation;
         this.screening = reservation.getScreening();
         this.seat = seat;
+        this.price = price;
         this.status = ReservationSeatStatus.PENDING;
+    }
+
+    public void confirm() {
+        if (this.status != ReservationSeatStatus.PENDING) {
+            throw new BusinessException(ErrorCode.CONFLICT, "Only pending seat can be confirmed");
+        }
+
+        this.status = ReservationSeatStatus.CONFIRMED;
+    }
+
+    public void release() {
+        if (this.status == ReservationSeatStatus.CONFIRMED) {
+            throw new BusinessException(ErrorCode.CONFLICT, "Confirmed seat cannot be released");
+        }
+
+        this.status = ReservationSeatStatus.RELEASED;
     }
 }

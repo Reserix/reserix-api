@@ -6,10 +6,14 @@ import com.reserix.api.reservation.dto.ReservationCreateRequest;
 import com.reserix.api.reservation.dto.ReservationResponse;
 import com.reserix.api.reservation.entity.Reservation;
 import com.reserix.api.reservation.entity.ReservationSeat;
+import com.reserix.api.reservation.entity.ReservationSeatStatus;
+import com.reserix.api.reservation.entity.ReservationStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
 import com.reserix.api.screen.entity.Screening;
+import com.reserix.api.screen.entity.ScreeningPrice;
 import com.reserix.api.screen.entity.Seat;
+import com.reserix.api.screen.entity.SeatType;
 import com.reserix.api.screen.repository.ScreeningRepository;
 import com.reserix.api.screen.repository.SeatRepository;
 import com.reserix.api.user.entity.User;
@@ -25,6 +29,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,10 +78,17 @@ public class ReservationService {
         }
 
         // 3. Check if the seats are reserved or not.
-        List<Long> reservedSeatIds = reservationSeatRepository.findReservedSeatIds(request.screeningId(),seatIds);
+        List<Long> unavailableSeatIds = reservationSeatRepository.findUnavailableSeatIds(
+                request.screeningId(),
+                seatIds,
+                List.of(
+                        ReservationSeatStatus.PENDING,
+                        ReservationSeatStatus.CONFIRMED
+                )
+        );
 
-        if (!reservedSeatIds.isEmpty()) {
-            throw new IllegalArgumentException("Already reserved seats: " + reservedSeatIds);
+        if (!unavailableSeatIds.isEmpty()) {
+            throw new BusinessException(ErrorCode.CONFLICT, "Some seats are already reserved: " + unavailableSeatIds);
         }
 
         // 4. Create reservation
@@ -93,11 +106,23 @@ public class ReservationService {
 
             Reservation savedReservation = reservationRepository.save(reservation);
 
+            // Get prices for screening seat
+            Map<SeatType, Integer> seatPrices = screening.getScreeningPrices()
+                    .stream()
+                    .collect(Collectors.toMap(
+                            ScreeningPrice::getSeatType,
+                            ScreeningPrice::getPrice
+                    ));
+
             List<ReservationSeat> reservationSeats = new ArrayList<>();
             for (Seat seat : seats) {
+                // get price for seat
+                Integer seatPrice = seatPrices.get(seat.getSeatType());
+
                 ReservationSeat reservationSeat = new ReservationSeat(
                         savedReservation,
-                        seat
+                        seat,
+                        seatPrice
                 );
 
                 reservationSeats.add(reservationSeat);
@@ -109,5 +134,43 @@ public class ReservationService {
         } catch (DataIntegrityViolationException ex) {
             throw new IllegalArgumentException("The seats are already reserved");
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ReservationResponse cancelReservation(Long reservationId, Long userId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Reservation not found"));
+
+        if (!reservation.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "You cannot cancel this reservation");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.CANCELED) {
+            throw new IllegalArgumentException("Reservation already canceled");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.EXPIRED) {
+            throw new IllegalArgumentException("Reservation already expired");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+            throw new IllegalArgumentException("Confirmed reservation cannot be canceled yet");
+        }
+
+        reservation.cancel();
+
+        List<ReservationSeat> seats =
+                reservationSeatRepository.findByReservationId(reservationId);
+
+        for (ReservationSeat seat : seats) {
+            seat.release();
+            seatLockService.unlockSeat(
+                    reservation.getScreening().getId(),
+                    seat.getSeat().getId(),
+                    userId
+            );
+        }
+
+        return ReservationResponse.from(reservation, seats);
     }
 }

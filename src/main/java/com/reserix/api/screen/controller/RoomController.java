@@ -1,10 +1,13 @@
 package com.reserix.api.screen.controller;
 
+import com.reserix.api.common.response.ApiResponse;
 import com.reserix.api.screen.dto.RoomCreateRequest;
 import com.reserix.api.screen.dto.RoomResponse;
 import com.reserix.api.screen.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,21 +19,25 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    public RoomResponse createRoom(
+    public ResponseEntity<ApiResponse<RoomResponse>> createRoom(
             @Valid @RequestBody RoomCreateRequest request
             ) {
-        return roomService.createRoom(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Room created", roomService.createRoom(request)));
     }
 
     @GetMapping("/{roomId}")
-    public RoomResponse getRoom(
+    public ResponseEntity<ApiResponse<RoomResponse>> getRoom(
             @PathVariable Long roomId
     ) {
-        return roomService.getRoom(roomId);
+        return ResponseEntity
+                .ok(ApiResponse.success(roomService.getRoom(roomId)));
     }
 
     @GetMapping
-    public List<RoomResponse> getRooms() {
-        return roomService.getRooms();
+    public ResponseEntity<ApiResponse<List<RoomResponse>>> getRooms() {
+        return ResponseEntity
+                .ok(ApiResponse.success(roomService.getRooms()));
     }
 }

@@ -48,4 +48,28 @@ public class Reservation extends BaseEntity {
         this.status = ReservationStatus.PENDING;
         this.expireAt = expireAt;
     }
+
+    public void expire() {
+        if (this.status != ReservationStatus.PENDING) {
+            return;
+        }
+
+        this.status = ReservationStatus.EXPIRED;
+    }
+
+    public void confirm() {
+        if (this.status != ReservationStatus.PENDING) {
+            throw new IllegalStateException("Only pending reservation can be confirmed");
+        }
+
+        this.status = ReservationStatus.CONFIRMED;
+    }
+
+    public void cancel() {
+        if (this.status != ReservationStatus.PENDING) {
+            return;
+        }
+
+        this.status = ReservationStatus.CANCELED;
+    }
 }

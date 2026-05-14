@@ -1,8 +1,11 @@
 package com.reserix.api.reservation.entity;
 
 public enum ReservationSeatStatus {
-    AVAILABLE,
+    AVAILABLE,    // Seat available
     PENDING,     // Seat was locked (PENDING)
     CONFIRMED,  // Confirmed (CONFIRMED)
-    RELEASED    // Released for user canceling the payment or expired
+    EXPIRED,    // Time expired
+    CANCELLED,   // User canceled
+    FAILED,          // Payment failed
+    RELEASED,       // Seat released
 }

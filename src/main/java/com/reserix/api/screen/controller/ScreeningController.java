@@ -1,11 +1,14 @@
 package com.reserix.api.screen.controller;
 
+import com.reserix.api.common.response.ApiResponse;
 import com.reserix.api.screen.dto.ScreeningCreateRequest;
 import com.reserix.api.screen.dto.ScreeningResponse;
 import com.reserix.api.screen.dto.ScreeningSeatResponse;
 import com.reserix.api.screen.service.ScreeningService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,28 +20,33 @@ public class ScreeningController {
     private final ScreeningService screeningService;
 
     @PostMapping
-    public ScreeningResponse createScreening(
+    public ResponseEntity<ApiResponse<ScreeningResponse>> createScreening(
             @Valid @RequestBody ScreeningCreateRequest request
     ) {
-        return screeningService.createScreen(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Screening created", screeningService.createScreen(request)));
     }
 
     @GetMapping("{screeningId}")
-    public ScreeningResponse getScreening(
+    public ResponseEntity<ApiResponse<ScreeningResponse>> getScreening(
             @PathVariable Long screeningId
     ) {
-        return screeningService.getScreen(screeningId);
+        return ResponseEntity
+                .ok(ApiResponse.success(screeningService.getScreen(screeningId)));
     }
 
     @GetMapping
-    public List<ScreeningResponse> getAll() {
-        return screeningService.getAll();
+    public ResponseEntity<ApiResponse<List<ScreeningResponse>>> getAll() {
+        return ResponseEntity
+                .ok(ApiResponse.success(screeningService.getAll()));
     }
 
     @GetMapping("{screeningId}/seats")
-    public ScreeningSeatResponse getSeatStatus(
+    public ResponseEntity<ApiResponse<ScreeningSeatResponse>> getSeatStatus(
             @PathVariable Long screeningId
     ) {
-        return screeningService.getSeatStatus(screeningId);
+        return ResponseEntity
+                .ok(ApiResponse.success(screeningService.getSeatStatus(screeningId)));
     }
 }

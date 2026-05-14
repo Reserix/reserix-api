@@ -14,9 +14,16 @@ public record ReservationResponse(
         String movieName,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        List<Long> seats
+        List<Long> seats,
+        Integer totalPrice
 ) {
     public static ReservationResponse from(Reservation reservation, List<ReservationSeat> seats) {
+        Integer total = 0;
+
+        for (ReservationSeat seat : seats) {
+            total +=  seat.getPrice();
+        }
+
         return new ReservationResponse(
                 reservation.getId(),
                 reservation.getUser().getId(),
@@ -25,7 +32,8 @@ public record ReservationResponse(
                 reservation.getScreening().getMovie().getTitle(),
                 reservation.getScreening().getStartTime(),
                 reservation.getScreening().getEndTime(),
-                seats.stream().map((seat)-> seat.getSeat().getId()).toList()
+                seats.stream().map((seat)-> seat.getSeat().getId()).toList(),
+                total
         );
     }
 }

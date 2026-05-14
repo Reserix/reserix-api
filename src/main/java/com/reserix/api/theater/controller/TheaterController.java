@@ -1,10 +1,13 @@
 package com.reserix.api.theater.controller;
 
+import com.reserix.api.common.response.ApiResponse;
 import com.reserix.api.theater.dto.TheaterCreateRequest;
 import com.reserix.api.theater.dto.TheaterResponse;
 import com.reserix.api.theater.service.TheaterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,21 +19,25 @@ public class TheaterController {
     private final TheaterService theaterService;
 
     @PostMapping
-    public TheaterResponse createTheater(
+    public ResponseEntity<ApiResponse<TheaterResponse>> createTheater(
             @Valid @RequestBody TheaterCreateRequest request
     ) {
-            return theaterService.createTheater(request);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(ApiResponse.success("Theater created", theaterService.createTheater(request)));
     }
 
     @GetMapping("/{theaterId}")
-    public TheaterResponse getTheater(
+    public ResponseEntity<ApiResponse<TheaterResponse>> getTheater(
             @PathVariable Long theaterId
     ) {
-        return theaterService.getTheater(theaterId);
+        return ResponseEntity
+                .ok(ApiResponse.success(theaterService.getTheater(theaterId)));
     }
 
     @GetMapping
-    public List<TheaterResponse> getTheaters() {
-        return theaterService.getTheaters();
+    public ResponseEntity<ApiResponse<List<TheaterResponse>>> getTheaters() {
+        return ResponseEntity
+                .ok(ApiResponse.success(theaterService.getTheaters()));
     }
 }
