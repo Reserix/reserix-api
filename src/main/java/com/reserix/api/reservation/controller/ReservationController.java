@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/reservations")
@@ -23,8 +20,7 @@ public class ReservationController {
     @PostMapping
     public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(
             @Valid @RequestBody ReservationCreateRequest request,
-            @AuthenticationPrincipal Long userId)
-    {
+            @AuthenticationPrincipal Long userId) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
@@ -33,5 +29,16 @@ public class ReservationController {
                                 reservationService.createReservation(request, userId)
                         )
                 );
+    }
+
+    @PostMapping("/{reservationId}/cancel")
+    public ResponseEntity<ApiResponse<ReservationResponse>> cancelReservation(
+            @PathVariable Long reservationId,
+            @AuthenticationPrincipal Long userId
+    ) {
+        ReservationResponse response =
+                reservationService.cancelReservation(reservationId, userId);
+
+        return ResponseEntity.ok(ApiResponse.success("Reservation canceled", response));
     }
 }

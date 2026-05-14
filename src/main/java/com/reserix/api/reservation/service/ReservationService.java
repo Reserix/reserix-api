@@ -7,6 +7,7 @@ import com.reserix.api.reservation.dto.ReservationResponse;
 import com.reserix.api.reservation.entity.Reservation;
 import com.reserix.api.reservation.entity.ReservationSeat;
 import com.reserix.api.reservation.entity.ReservationSeatStatus;
+import com.reserix.api.reservation.entity.ReservationStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
 import com.reserix.api.screen.entity.Screening;
@@ -133,5 +134,43 @@ public class ReservationService {
         } catch (DataIntegrityViolationException ex) {
             throw new IllegalArgumentException("The seats are already reserved");
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public ReservationResponse cancelReservation(Long reservationId, Long userId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Reservation not found"));
+
+        if (!reservation.getUser().getId().equals(userId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN, "You cannot cancel this reservation");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.CANCELED) {
+            throw new IllegalArgumentException("Reservation already canceled");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.EXPIRED) {
+            throw new IllegalArgumentException("Reservation already expired");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+            throw new IllegalArgumentException("Confirmed reservation cannot be canceled yet");
+        }
+
+        reservation.cancel();
+
+        List<ReservationSeat> seats =
+                reservationSeatRepository.findByReservationId(reservationId);
+
+        for (ReservationSeat seat : seats) {
+            seat.release();
+            seatLockService.unlockSeat(
+                    reservation.getScreening().getId(),
+                    seat.getSeat().getId(),
+                    userId
+            );
+        }
+
+        return ReservationResponse.from(reservation, seats);
     }
 }
