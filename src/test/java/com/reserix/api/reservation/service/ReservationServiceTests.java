@@ -190,12 +190,12 @@ public class ReservationServiceTests {
     void createReservation_fail_whenScreeningNotFound() {
         // given
         ReservationCreateRequest request = new ReservationCreateRequest(
-                1L,
+                10L,
                 List.of(100L)
         );
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(screeningRepository.findById(999L)).thenReturn(Optional.empty());
+        // when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(screeningRepository.findById(10L)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> reservationService.createReservation(request, 1L))
