@@ -12,6 +12,13 @@ pipeline {
             }
         }
 
+        stage('Start DB') {
+            steps {
+                sh 'docker compose up -d postgres redis'
+                sh 'sleep 10'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh './gradlew clean build -x test'
