@@ -17,6 +17,12 @@ public interface ReservationSeatRepository extends JpaRepository<ReservationSeat
 
     List<ReservationSeat> findReservationSeatsByScreening(Screening screening);
 
+    boolean existsByScreeningIdAndSeatIdAndStatusIn(
+            Long screeningId,
+            Long seatId,
+            Collection<ReservationSeatStatus> statuses
+    );
+
     @Query("""
         select rs.seat.id
         from ReservationSeat rs
