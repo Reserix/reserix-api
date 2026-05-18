@@ -1,5 +1,6 @@
 package com.reserix.api.reservation.scheduler;
 
+import com.reserix.api.monitoring.health.ReservationSchedulerHealthIndicator;
 import com.reserix.api.reservation.service.ReservationExpirationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ public class ReservationExpireScheduler {
     private final ReservationExpirationService reservationExpirationService;
     private final StringRedisTemplate stringRedisTemplate;
 
+    private final ReservationSchedulerHealthIndicator reservationSchedulerHealthIndicator;
+
     @Scheduled(fixedDelay = 30000)
     public void expirePendingReservations() {
         Boolean locked = stringRedisTemplate.opsForValue()
@@ -34,6 +37,8 @@ public class ReservationExpireScheduler {
             if (expiredCount > 0) {
                 log.info("Expired pending reservations count={}", expiredCount);
             }
+
+            reservationSchedulerHealthIndicator.markExecuted();
         } catch (Exception e) {
             log.error("Failed to expire pending reservations", e);
         } finally {
