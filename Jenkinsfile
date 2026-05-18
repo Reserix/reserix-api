@@ -19,6 +19,9 @@ pipeline {
         }
 
         stage('Start DB') {
+            when {
+                branch 'develop'
+            }
             steps {
                 sh 'docker compose up -d postgres redis'
                 sh 'sleep 10'
@@ -43,12 +46,18 @@ pipeline {
         }
 
         stage('Docker Build') {
+            when {
+                branch 'develop'
+            }
             steps {
                 sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
 
         stage('Docker Push') {
+            when {
+                branch 'develop'
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credential',
@@ -64,6 +73,9 @@ pipeline {
         }
 
         stage('Deploy to Dev') {
+            when {
+                branch 'develop'
+            }
             steps {
                 withCredentials([sshUserPrivateKey(
                     credentialsId: 'dev-server-ssh',
