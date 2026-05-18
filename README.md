@@ -130,3 +130,72 @@ This project focuses on **real-world distributed system challenges**:
 ## 📌 Status
 
 🚧 In Progress – Building core reservation engine and concurrency handling
+
+## 🚩 How to Run on Local Environment
+
+### Prerequisites
+
+- Java 17
+- Git
+- Docker
+- PostgreSQL
+- Redis
+
+### Clone Repository
+
+```bash
+git clone https://github.com/Reserix/reserix-api.git
+cd reserix-api
+```
+
+### Configure Environment Variables
+
+```dotenv
+SPRING_PROFILES_ACTIVE=dev
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/reserix_db
+SPRING_DATASOURCE_USERNAME=reserix_user
+SPRING_DATASOURCE_PASSWORD=your_password
+SPRING_DATA_REDIS_HOST=localhost
+SPRING_DATA_REDIS_PORT=6379
+```
+
+### Run Application
+
+```bash
+./gradlew bootRun
+```
+
+### How to Run Using Docker
+
+#### Create .env
+
+```dotenv
+POSTGRES_DB=reserix_db
+POSTGRES_USER=reserix_user
+POSTGRES_PASSWORD=reserix_password
+
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/reserix_db
+SPRING_DATASOURCE_USERNAME=reserix_user
+SPRING_DATASOURCE_PASSWORD=reserix_password
+
+SPRING_DATA_REDIS_HOST=redis
+SPRING_DATA_REDIS_PORT=6379
+```
+
+#### Start Services
+
+```bash
+docker compose up -d
+```
+
+#### Check Logs
+
+```bash
+docker compose logs -f app
+```
+
+#### Stop Services
+
+```bash
+docker compose down
+```
