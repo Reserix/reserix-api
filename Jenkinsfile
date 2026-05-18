@@ -5,6 +5,11 @@ pipeline {
         jdk 'JDK17'
     }
 
+    environment {
+        IMAGE_NAME = 'thedevfaiz/reserix-api'
+        IMAGE_TAG = 'develop'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -33,6 +38,12 @@ pipeline {
                 always {
                     junit '**/build/test-results/test/*.xml'
                 }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
     }
