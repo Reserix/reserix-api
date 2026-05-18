@@ -3,4 +3,4 @@ spring:
     name: reserix-api
 
   profiles:
-    active: dev
+    active: local

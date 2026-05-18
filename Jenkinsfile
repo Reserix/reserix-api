@@ -8,6 +8,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'thedevfaiz/reserix-api'
         IMAGE_TAG = 'develop'
+        DEV_HOST = '135.181.185.147'
     }
 
     stages {
@@ -57,6 +58,28 @@ pipeline {
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                         docker push $IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Dev') {
+            steps {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'dev-server-ssh',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    sh '''
+                        ssh -i "$SSH_KEY" \
+                            -o StrictHostKeyChecking=no \
+                            "$SSH_USER@$DEV_HOST" "
+
+                            cd /opt/reserix-api &&
+
+                            docker compose pull &&
+                            docker compose up -d
+                        "
                     '''
                 }
             }
