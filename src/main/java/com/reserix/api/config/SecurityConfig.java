@@ -31,8 +31,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/login",
-                                "/auth/register"
-                        ).permitAll()
+                                "/auth/register").permitAll()
+                        .requestMatchers(
+                                "/actuator/health",
+                                "/actuator/prometheus").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
