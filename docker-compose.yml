@@ -42,6 +42,22 @@ services:
     networks:
       - reserix-network
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: reserix-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - reserix-network
+    depends_on:
+      - prometheus
+
   app:
     image: thedevfaiz/reserix-api:develop
     container_name: reserix-api
@@ -65,6 +81,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  grafana_data:
 networks:
   reserix-network:
     driver: bridge
