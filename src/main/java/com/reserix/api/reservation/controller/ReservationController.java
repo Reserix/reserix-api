@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/reservations")
 @RequiredArgsConstructor
@@ -40,5 +42,15 @@ public class ReservationController {
                 reservationService.cancelReservation(reservationId, userId);
 
         return ResponseEntity.ok(ApiResponse.success("Reservation canceled", response));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<List<ReservationResponse>>> getMyReservation(
+            @AuthenticationPrincipal Long userId
+    ) {
+        List<ReservationResponse> response =
+                reservationService.getMyReservation(userId);
+
+        return ResponseEntity.ok(ApiResponse.success("My reservations", response));
     }
 }

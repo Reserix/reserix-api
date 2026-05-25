@@ -10,6 +10,7 @@ import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.reservation.entity.ReservationStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
+import com.reserix.api.screen.dto.RoomResponse;
 import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.ScreeningPrice;
 import com.reserix.api.screen.entity.Seat;
@@ -172,5 +173,19 @@ public class ReservationService {
         }
 
         return ReservationResponse.from(reservation, seats);
+    }
+
+    public List<ReservationResponse> getMyReservation(Long userId) {
+        User me = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "User not exists"));
+
+        return reservationRepository.findReservationByUser(me)
+                .stream()
+                .map(reservation -> {
+                    List<ReservationSeat> seats =
+                            reservationSeatRepository.findByReservationId(reservation.getId());
+                    return ReservationResponse.from(reservation, seats);
+                })
+                .toList();
     }
 }

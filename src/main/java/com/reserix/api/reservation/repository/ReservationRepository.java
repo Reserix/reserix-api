@@ -2,6 +2,7 @@ package com.reserix.api.reservation.repository;
 
 import com.reserix.api.reservation.entity.Reservation;
 import com.reserix.api.reservation.entity.ReservationStatus;
+import com.reserix.api.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+
+    List<Reservation> findReservationByUser(User user);
+
     @Query("""
         select r.id
         from Reservation r
