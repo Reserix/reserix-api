@@ -45,16 +45,34 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            when {
-                branch 'develop'
-            }
-            steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
-            }
-        }
+//        stage('Docker Build') {
+//            when {
+//                branch 'develop'
+//            }
+//            steps {
+//                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+//            }
+//        }
+//
+//        stage('Docker Push') {
+//            when {
+//                branch 'develop'
+//            }
+//            steps {
+//                withCredentials([usernamePassword(
+//                    credentialsId: 'dockerhub-credential',
+//                    usernameVariable: 'DOCKER_USERNAME',
+//                    passwordVariable: 'DOCKER_PASSWORD'
+//                )]) {
+//                    sh '''
+//                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+//                        docker push $IMAGE_NAME:$IMAGE_TAG
+//                    '''
+//                }
+//            }
+//        }
 
-        stage('Docker Push') {
+        stage('Docker Build & Push') {
             when {
                 branch 'develop'
             }
@@ -66,7 +84,13 @@ pipeline {
                 )]) {
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                        docker push $IMAGE_NAME:$IMAGE_TAG
+
+                        docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
+
+                        docker buildx build \
+                          --platform linux/amd64,linux/arm64 \
+                          -t $IMAGE_NAME:$IMAGE_TAG \
+                          --push .
                     '''
                 }
             }

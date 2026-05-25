@@ -60,6 +60,7 @@ services:
 
   app:
     image: thedevfaiz/reserix-api:develop
+    platform: linux/arm64
     container_name: reserix-api
     restart: unless-stopped
     env_file:
