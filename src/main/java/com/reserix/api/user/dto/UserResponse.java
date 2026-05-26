@@ -4,12 +4,16 @@ import com.reserix.api.user.entity.User;
 import com.reserix.api.user.entity.UserRole;
 import com.reserix.api.user.entity.UserStatus;
 
+import java.time.LocalDateTime;
+
 public record UserResponse(
         Long id,
         String email,
         String username,
         UserRole role,
-        UserStatus status
+        UserStatus status,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -17,7 +21,9 @@ public record UserResponse(
                 user.getEmail(),
                 user.getUsername(),
                 user.getRole(),
-                user.getStatus()
+                user.getStatus(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
 }

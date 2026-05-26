@@ -1,5 +1,10 @@
 package com.reserix.api.security;
 
+import com.reserix.api.common.exception.BusinessException;
+import com.reserix.api.common.exception.ErrorCode;
+import com.reserix.api.user.entity.User;
+import com.reserix.api.user.entity.UserStatus;
+import com.reserix.api.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +25,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -35,11 +41,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 Long userId = jwtTokenProvider.getUserId(token);
 
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "User not found"));
+
+                if (user.getStatus() != UserStatus.ACTIVE) {
+                    throw new BusinessException(ErrorCode.FORBIDDEN, "User not activated");
+                }
+
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userId,
                                 null,
-                                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

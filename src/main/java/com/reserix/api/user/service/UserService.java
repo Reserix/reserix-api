@@ -1,10 +1,15 @@
 package com.reserix.api.user.service;
 
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.user.dto.UserCreateByAdminRequest;
 import com.reserix.api.user.dto.UserResponse;
 import com.reserix.api.user.entity.User;
 import com.reserix.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,10 +50,26 @@ public class UserService {
         return UserResponse.from(user);
     }
 
-    public List<UserResponse> getAll() {
-        return userRepository.findAll()
+    public PageResponse<UserResponse> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("id").descending()
+        );
+
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        List<UserResponse> content = userPage.getContent()
                 .stream()
                 .map(UserResponse::from)
                 .toList();
+
+        return new PageResponse<>(
+                content,
+                userPage.getNumber(),
+                userPage.getSize(),
+                userPage.getTotalElements(),
+                userPage.getTotalPages()
+        );
     }
 }

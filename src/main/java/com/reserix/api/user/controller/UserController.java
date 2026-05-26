@@ -1,6 +1,7 @@
 package com.reserix.api.user.controller;
 
 import com.reserix.api.common.response.ApiResponse;
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.user.dto.UserCreateByAdminRequest;
 import com.reserix.api.user.dto.UserCreateRequest;
 import com.reserix.api.user.dto.UserResponse;
@@ -37,8 +38,11 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getAll() {
+    public ResponseEntity<ApiResponse<PageResponse<UserResponse>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
         return ResponseEntity
-                .ok(ApiResponse.success(userService.getAll()));
+                .ok(ApiResponse.success(userService.getAll(page, size)));
     }
 }
