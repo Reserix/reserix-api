@@ -57,6 +57,7 @@ EOF
                     }
                 }
             }
+        }
 
         stage('Start DB') {
             when {
