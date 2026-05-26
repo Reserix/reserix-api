@@ -103,8 +103,8 @@ public class ReservationServiceTests {
     void createReservation_success_shouldCreatePendingReservation() {
         // given
         when(user.getId()).thenReturn(1L);
-        when(seat1.getId()).thenReturn(100L);
-        when(seat2.getId()).thenReturn(101L);
+        // when(seat1.getId()).thenReturn(100L);
+        // when(seat2.getId()).thenReturn(101L);
         when(seat1.getRoom()).thenReturn(room);
         when(seat2.getRoom()).thenReturn(room);
         when(seat1.getSeatType()).thenReturn(SeatType.STANDARD);
