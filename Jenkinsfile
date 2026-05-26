@@ -22,21 +22,20 @@ pipeline {
             when {
                 branch 'develop'
             }
-            stage('Create .env') {
-                steps {
-                    withCredentials([
-                            usernamePassword(
-                                    credentialsId: 'postgres-credential',
-                                    usernameVariable: 'POSTGRES_USER',
-                                    passwordVariable: 'POSTGRES_PASSWORD'
-                            ),
-                            string(
-                                    credentialsId: 'jwt-secret',
-                                    variable: 'JWT_SECRET'
-                            )
-                    ]) {
-                        sh '''
-                cat > .env <<EOF
+            steps {
+                withCredentials([
+                        usernamePassword(
+                                credentialsId: 'postgres-credential',
+                                usernameVariable: 'POSTGRES_USER',
+                                passwordVariable: 'POSTGRES_PASSWORD'
+                        ),
+                        string(
+                                credentialsId: 'jwt-secret',
+                                variable: 'JWT_SECRET'
+                        )
+                ]) {
+                    sh '''
+            cat > .env <<EOF
 POSTGRES_DB=reserix_db
 
 POSTGRES_USER=$POSTGRES_USER
@@ -52,9 +51,8 @@ SPRING_DATA_REDIS_PORT=6379
 JWT_SECRET=$JWT_SECRET
 EOF
 
-                chmod 600 .env
-            '''
-                    }
+            chmod 600 .env
+        '''
                 }
             }
         }
