@@ -2,7 +2,7 @@ server:
   port: 8080
 
 jwt:
-  secret: "secret999999999999999999999999999999999999999999999999999999"
+  secret: ${JWT_SECRET}
   access-token-expiration-ms: 3600000
 
 spring:

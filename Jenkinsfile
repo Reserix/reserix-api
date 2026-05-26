@@ -18,6 +18,46 @@ pipeline {
             }
         }
 
+        stage('Create .env') {
+            when {
+                branch 'develop'
+            }
+            stage('Create .env') {
+                steps {
+                    withCredentials([
+                            usernamePassword(
+                                    credentialsId: 'postgres-credential',
+                                    usernameVariable: 'POSTGRES_USER',
+                                    passwordVariable: 'POSTGRES_PASSWORD'
+                            ),
+                            string(
+                                    credentialsId: 'jwt-secret',
+                                    variable: 'JWT_SECRET'
+                            )
+                    ]) {
+                        sh '''
+                cat > .env <<EOF
+POSTGRES_DB=reserix_db
+
+POSTGRES_USER=$POSTGRES_USER
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/reserix_db
+SPRING_DATASOURCE_USERNAME=$POSTGRES_USER
+SPRING_DATASOURCE_PASSWORD=$POSTGRES_PASSWORD
+
+SPRING_DATA_REDIS_HOST=redis
+SPRING_DATA_REDIS_PORT=6379
+
+JWT_SECRET=$JWT_SECRET
+EOF
+
+                chmod 600 .env
+            '''
+                    }
+                }
+            }
+
         stage('Start DB') {
             when {
                 branch 'develop'

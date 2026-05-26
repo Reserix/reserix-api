@@ -4,6 +4,7 @@ import com.reserix.api.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -37,10 +38,18 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/actuator/health",
                                 "/actuator/prometheus").permitAll()
-                        // Admin only
                         .requestMatchers(
                                 "/api/v1/users/**"
                         ).hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/v1/screenings",
+                                "/api/v1/screenings/**"
+                        ).hasAnyRole("ADMIN", "THEATER_MANAGER")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/screenings/**"
+                        ).hasAnyRole("ADMIN", "THEATER_MANAGER", "USER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(
