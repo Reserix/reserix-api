@@ -35,10 +35,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/uploads/**",
                                 "/auth/login",
-                                "/auth/register").permitAll()
-                        .requestMatchers(
+                                "/auth/register",
                                 "/actuator/health",
-                                "/actuator/prometheus").permitAll()
+                                "/actuator/prometheus"
+                        ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/movies/**"
+                        ).permitAll()
                         .requestMatchers(
                                 "/api/v1/users/**",
                                 "/api/v1/theaters",

@@ -1,5 +1,6 @@
 package com.reserix.api.movie.service;
 
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.file.FileStorageService;
 import com.reserix.api.file.ThumbnailUploadHelper;
 import com.reserix.api.movie.dto.MovieCreateRequest;
@@ -8,6 +9,10 @@ import com.reserix.api.movie.entity.Movie;
 import com.reserix.api.movie.entity.MovieThumbnail;
 import com.reserix.api.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,10 +57,25 @@ public class MovieService {
         return MovieResponse.from(movie);
     }
 
-    public List<MovieResponse> getMovies() {
-        return movieRepository.findAll()
+    public PageResponse<MovieResponse> getMovies(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("id").descending()
+        );
+        Page<Movie> moviePage = movieRepository.findAll(pageable);
+
+        List<MovieResponse> content = moviePage.getContent()
                 .stream()
                 .map(MovieResponse::from)
                 .toList();
+
+        return new PageResponse<>(
+                content,
+                moviePage.getNumber(),
+                moviePage.getSize(),
+                moviePage.getTotalElements(),
+                moviePage.getTotalPages()
+        );
     }
 }

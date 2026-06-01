@@ -26,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,16 @@ public class ReservationServiceTests {
                 TheaterStatus.ACTIVE
                 );
         room = new Room(theater, "R201", 20, 50);
-        movie = new Movie("Joker", "A mentally troubled comedian descends into madness.", 122, "", "AAAA");
+        movie = new Movie(
+                "Joker",
+                "A mentally troubled comedian descends into madness.",
+                122,
+                "",
+                "AAAA",
+                "English",
+                12,
+                LocalDate.parse("2025-02-19"),
+                "");
         screening = new Screening(movie, room, LocalDateTime.parse("2026-05-15T00:00:00"), LocalDateTime.parse("2026-05-15T02:00:00"));
         screeningPriceSTD = new ScreeningPrice(screening, SeatType.STANDARD, 10000);
         screeningPriceVIP = new ScreeningPrice(screening, SeatType.VIP, 15000);

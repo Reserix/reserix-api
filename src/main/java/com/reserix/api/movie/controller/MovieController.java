@@ -1,6 +1,7 @@
 package com.reserix.api.movie.controller;
 
 import com.reserix.api.common.response.ApiResponse;
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.movie.dto.MovieCreateRequest;
 import com.reserix.api.movie.dto.MovieResponse;
 import com.reserix.api.movie.service.MovieService;
@@ -49,8 +50,11 @@ public class MovieController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<MovieResponse>>> getMovies() {
+    public ResponseEntity<ApiResponse<PageResponse<MovieResponse>>> getMovies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
         return ResponseEntity
-                .ok(ApiResponse.success(movieService.getMovies()));
+                .ok(ApiResponse.success(movieService.getMovies(page, size)));
     }
 }
