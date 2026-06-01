@@ -14,6 +14,7 @@ import com.reserix.api.screen.entity.*;
 import com.reserix.api.screen.repository.ScreeningRepository;
 import com.reserix.api.screen.repository.SeatRepository;
 import com.reserix.api.theater.entity.Theater;
+import com.reserix.api.theater.entity.TheaterStatus;
 import com.reserix.api.user.entity.User;
 import com.reserix.api.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,9 +73,19 @@ public class ReservationServiceTests {
 
     @BeforeEach
     void setUp() {
-        theater = new Theater("AMC Fresh Meadows 7", "190-02 Horace Harding Expy, Fresh Meadows, NY 11365");
+        theater = new Theater(
+                "AMC Fresh Meadows 7",
+                "190-02 Horace Harding Expy, Fresh Meadows, NY 11365",
+                user,
+                "AMC Fresh Meadows 7 is a modern movie theater in Fresh Meadows, Queens, offering seven screens, reserved seating, AMC Signature Recliners, IMAX at AMC, accessibility features, and food and drink ordering. It is a convenient local cinema for comfortable moviegoing and current film releases.",
+                "718-454-6767",
+                "test@athenia.co",
+                90.0,
+                90.0,
+                TheaterStatus.ACTIVE
+                );
         room = new Room(theater, "R201", 20, 50);
-        movie = new Movie("Joker", "A mentally troubled comedian descends into madness.", 122);
+        movie = new Movie("Joker", "A mentally troubled comedian descends into madness.", 122, "", "AAAA");
         screening = new Screening(movie, room, LocalDateTime.parse("2026-05-15T00:00:00"), LocalDateTime.parse("2026-05-15T02:00:00"));
         screeningPriceSTD = new ScreeningPrice(screening, SeatType.STANDARD, 10000);
         screeningPriceVIP = new ScreeningPrice(screening, SeatType.VIP, 15000);

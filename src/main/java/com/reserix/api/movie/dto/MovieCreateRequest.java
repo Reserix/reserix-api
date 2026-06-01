@@ -15,6 +15,9 @@ public record MovieCreateRequest(
         @NotNull
         @Min(0)
         @Max(1000)
-        Integer durationMinutes
+        Integer durationMinutes,
+
+        @NotBlank(message = "Director is required")
+        String director
 ) {
 }

@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/uploads/**",
                                 "/auth/login",
                                 "/auth/register").permitAll()
                         .requestMatchers(
@@ -50,6 +51,12 @@ public class SecurityConfig {
                                 HttpMethod.GET,
                                 "/api/v1/screenings/**"
                         ).hasAnyRole("ADMIN", "THEATER_MANAGER", "USER")
+
+                        // Theater Permissions
+                        .requestMatchers(
+                                "/api/v1/theaters",
+                                "/api/v1/theaters/**"
+                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

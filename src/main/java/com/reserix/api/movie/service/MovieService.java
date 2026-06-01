@@ -1,5 +1,6 @@
 package com.reserix.api.movie.service;
 
+import com.reserix.api.file.FileStorageService;
 import com.reserix.api.movie.dto.MovieCreateRequest;
 import com.reserix.api.movie.dto.MovieResponse;
 import com.reserix.api.movie.entity.Movie;
@@ -7,6 +8,7 @@ import com.reserix.api.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,13 +17,18 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MovieService {
     private final MovieRepository movieRepository;
+    private final FileStorageService fileStorageService;
 
     @Transactional
-    public MovieResponse createMovie(MovieCreateRequest request) {
+    public MovieResponse createMovie(MovieCreateRequest request, MultipartFile thumbnail) {
+        String thumbnailUrl = fileStorageService.upload(thumbnail);
+
         Movie movie = new Movie(
                 request.title(),
                 request.description(),
-                request.durationMinutes()
+                request.durationMinutes(),
+                thumbnailUrl,
+                request.director()
         );
 
         Movie createdMovie = movieRepository.save(movie);

@@ -7,8 +7,10 @@ import com.reserix.api.movie.service.MovieService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,13 +20,21 @@ import java.util.List;
 public class MovieController {
     private final MovieService movieService;
 
-    @PostMapping
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<ApiResponse<MovieResponse>> createMovie(
-            @Valid @RequestBody MovieCreateRequest request
+            @Valid @RequestBody MovieCreateRequest request,
+            @RequestPart("thumbnail") MultipartFile thumbnail
     ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Movie created", movieService.createMovie(request)));
+                .body(
+                        ApiResponse.success(
+                                "Movie created",
+                                movieService.createMovie(request, thumbnail)
+                        )
+                );
     }
 
     @GetMapping("/{movieId}")

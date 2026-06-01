@@ -10,6 +10,9 @@ app:
     email: ${APP_ADMIN_EMAIL:admin@reserix.athenialabs.com}
     password: ${APP_ADMIN_PASSWORD:ChangeIt}
 
+  storage:
+    upload-dir: ${APP_STORAGE_UPLOAD_DIRS:uploads}
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/reserix_db
