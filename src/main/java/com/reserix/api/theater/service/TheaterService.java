@@ -4,6 +4,7 @@ import com.reserix.api.common.exception.BusinessException;
 import com.reserix.api.common.exception.ErrorCode;
 import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.file.FileStorageService;
+import com.reserix.api.file.ThumbnailUploadHelper;
 import com.reserix.api.theater.dto.TheaterCreateRequest;
 import com.reserix.api.theater.dto.TheaterResponse;
 import com.reserix.api.theater.entity.Theater;
@@ -29,7 +30,7 @@ import java.util.List;
 public class TheaterService {
     private final TheaterRepository theaterRepository;
     private final UserRepository userRepository;
-    private final FileStorageService fileStorageService;
+    private final ThumbnailUploadHelper thumbnailUploadHelper;
 
     @Transactional
     public TheaterResponse createTheater(TheaterCreateRequest request, List<MultipartFile> thumbnails) {
@@ -56,7 +57,10 @@ public class TheaterService {
                 request.status()
         );
 
-        addThumbnails(theater, thumbnails);
+        thumbnailUploadHelper.addThumbnails(
+                thumbnails,
+                theater::addThumbnail
+        );
 
         Theater savedTheater = theaterRepository.save(theater);
 
@@ -91,24 +95,5 @@ public class TheaterService {
                 theaterPage.getTotalElements(),
                 theaterPage.getTotalPages()
         );
-    }
-
-    private void addThumbnails(Theater theater, List<MultipartFile> thumbnails) {
-        if (thumbnails == null || thumbnails.isEmpty()) {
-            return;
-        }
-
-        int sortOrder = 0;
-
-        for (MultipartFile thumbnail : thumbnails) {
-            if (thumbnail == null || thumbnail.isEmpty()) {
-                continue;
-            }
-
-            String imageUrl = fileStorageService.upload(thumbnail);
-            theater.addThumbnail(imageUrl, sortOrder, sortOrder == 0);
-
-            sortOrder++;
-        }
     }
 }

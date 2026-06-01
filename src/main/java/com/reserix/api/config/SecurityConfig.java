@@ -40,7 +40,10 @@ public class SecurityConfig {
                                 "/actuator/health",
                                 "/actuator/prometheus").permitAll()
                         .requestMatchers(
-                                "/api/v1/users/**"
+                                "/api/v1/users/**",
+                                "/api/v1/theaters",
+                                "/api/v1/theaters/**",
+                                "/api/v1/movies"
                         ).hasRole("ADMIN")
                         .requestMatchers(
                                 HttpMethod.POST,
@@ -49,14 +52,9 @@ public class SecurityConfig {
                         ).hasAnyRole("ADMIN", "THEATER_MANAGER")
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/api/v1/screenings/**"
+                                "/api/v1/screenings/**",
+                                "/api/v1/movies/**"
                         ).hasAnyRole("ADMIN", "THEATER_MANAGER", "USER")
-
-                        // Theater Permissions
-                        .requestMatchers(
-                                "/api/v1/theaters",
-                                "/api/v1/theaters/**"
-                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +28,6 @@ public class Movie extends BaseEntity {
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
 
-    @Column(name = "thumbnail_url")
-    private String thumbnailUrl;
-
     @Column(name = "director", nullable = false)
     private String director;
 
@@ -50,6 +47,29 @@ public class Movie extends BaseEntity {
     @OneToMany(mappedBy = "movie")
     private List<MovieRating> ratings = new ArrayList<>();
 
+    @Column(name = "genre")
+    private String genre;
+
+    @Column(name = "language")
+    private String language;
+
+    @Column(name = "minimum_age")
+    private Integer minimumAge;
+
+    @Column(name = "release_date")
+    private LocalDate releaseDate;
+
+    @Column(name = "trailer_url")
+    private String trailerUrl;
+
+    @OneToMany(
+            mappedBy = "movie",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @OrderBy("sortOrder ASC, id ASC")
+    private List<MovieThumbnail> thumbnails = new ArrayList<>();
+
     protected Movie() {
 
     }
@@ -58,14 +78,22 @@ public class Movie extends BaseEntity {
             String title,
             String description,
             Integer durationMinutes,
-            String thumbnailUrl,
-            String director
+            String director,
+            String genre,
+            String language,
+            Integer minimumAge,
+            LocalDate releaseDate,
+            String trailerUrl
     ) {
         this.title = title;
         this.description = description;
         this.durationMinutes = durationMinutes;
-        this.thumbnailUrl = thumbnailUrl;
         this.director = director;
+        this.genre = genre;
+        this.language = language;
+        this.minimumAge = minimumAge;
+        this.releaseDate = releaseDate;
+        this.trailerUrl = trailerUrl;
         this.averageRating = BigDecimal.ZERO;
         this.ratingCount = 0;
     }
@@ -76,5 +104,14 @@ public class Movie extends BaseEntity {
     ) {
         this.averageRating = averageRating;
         this.ratingCount = ratingCount;
+    }
+
+    public void addThumbnail(String imageUrl, Integer sortOrder, boolean primary) {
+        MovieThumbnail thumbnail = new MovieThumbnail(this, imageUrl, sortOrder, primary);
+        this.thumbnails.add(thumbnail);
+    }
+
+    public void clearThumbnails() {
+        this.thumbnails.clear();
     }
 }

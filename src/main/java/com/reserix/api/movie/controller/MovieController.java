@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -19,20 +20,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovieController {
     private final MovieService movieService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<ApiResponse<MovieResponse>> createMovie(
-            @Valid @RequestBody MovieCreateRequest request,
-            @RequestPart("thumbnail") MultipartFile thumbnail
+            @Valid @RequestPart("request") String requestJson,
+            @RequestPart(value = "thumbnails", required = false) List<MultipartFile> thumbnails
     ) {
+        MovieCreateRequest request = objectMapper.readValue(requestJson, MovieCreateRequest.class);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(
                         ApiResponse.success(
                                 "Movie created",
-                                movieService.createMovie(request, thumbnail)
+                                movieService.createMovie(request, thumbnails)
                         )
                 );
     }

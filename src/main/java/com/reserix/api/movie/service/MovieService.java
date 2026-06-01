@@ -1,9 +1,11 @@
 package com.reserix.api.movie.service;
 
 import com.reserix.api.file.FileStorageService;
+import com.reserix.api.file.ThumbnailUploadHelper;
 import com.reserix.api.movie.dto.MovieCreateRequest;
 import com.reserix.api.movie.dto.MovieResponse;
 import com.reserix.api.movie.entity.Movie;
+import com.reserix.api.movie.entity.MovieThumbnail;
 import com.reserix.api.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,18 +19,25 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class MovieService {
     private final MovieRepository movieRepository;
-    private final FileStorageService fileStorageService;
+    private final ThumbnailUploadHelper thumbnailUploadHelper;
 
     @Transactional
-    public MovieResponse createMovie(MovieCreateRequest request, MultipartFile thumbnail) {
-        String thumbnailUrl = fileStorageService.upload(thumbnail);
-
+    public MovieResponse createMovie(MovieCreateRequest request, List<MultipartFile> thumbnails) {
         Movie movie = new Movie(
                 request.title(),
                 request.description(),
                 request.durationMinutes(),
-                thumbnailUrl,
-                request.director()
+                request.director(),
+                request.genre(),
+                request.language(),
+                request.minimumAge(),
+                request.releaseDate(),
+                request.trailerUrl()
+        );
+
+        thumbnailUploadHelper.addThumbnails(
+                thumbnails,
+                movie::addThumbnail
         );
 
         Movie createdMovie = movieRepository.save(movie);
