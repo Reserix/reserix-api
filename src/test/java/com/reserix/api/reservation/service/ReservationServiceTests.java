@@ -236,7 +236,7 @@ public class ReservationServiceTests {
 
         when(screeningRepository.findById(10L)).thenReturn(Optional.of(screening));
 
-        Seat seat = new Seat(room, 0, 0);
+        Seat seat = new Seat(room, 0, 0, "A", 1, SeatType.STANDARD, true, 0);
         // only one seat returned
         when(seatRepository.findAllById(List.of(100L, 101L))).thenReturn(List.of(seat));
 
