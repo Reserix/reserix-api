@@ -22,6 +22,7 @@ public record MovieResponse(
         LocalDate releaseDate,
         String trailerUrl,
         List<String> thumbnailUrls,
+        List<MovieCastInfo> movieCasts,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -42,6 +43,13 @@ public record MovieResponse(
                 movie.getThumbnails()
                         .stream()
                         .map(MovieThumbnail::getFilePath)
+                        .toList(),
+                movie.getCasts()
+                        .stream()
+                        .map(cast -> new MovieCastInfo(
+                                cast.getActorName(),
+                                cast.getRoleName()
+                        ))
                         .toList(),
                 movie.getCreatedAt(),
                 movie.getUpdatedAt()

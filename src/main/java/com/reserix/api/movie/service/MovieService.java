@@ -3,10 +3,13 @@ package com.reserix.api.movie.service;
 import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.file.FileStorageService;
 import com.reserix.api.file.ThumbnailUploadHelper;
+import com.reserix.api.movie.dto.MovieCastInfo;
 import com.reserix.api.movie.dto.MovieCreateRequest;
 import com.reserix.api.movie.dto.MovieResponse;
 import com.reserix.api.movie.entity.Movie;
+import com.reserix.api.movie.entity.MovieCast;
 import com.reserix.api.movie.entity.MovieThumbnail;
+import com.reserix.api.movie.repository.MovieCastRepository;
 import com.reserix.api.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +29,7 @@ import java.util.List;
 public class MovieService {
     private final MovieRepository movieRepository;
     private final ThumbnailUploadHelper thumbnailUploadHelper;
+    private final MovieCastRepository movieCastRepository;
 
     @Transactional
     public MovieResponse createMovie(MovieCreateRequest request, List<MultipartFile> thumbnails) {
@@ -46,6 +51,18 @@ public class MovieService {
         );
 
         Movie createdMovie = movieRepository.save(movie);
+
+        List<MovieCast> movieCasts = new ArrayList<>();
+        for (MovieCastInfo cast : request.movieCasts()) {
+            MovieCast movieCast = new MovieCast(
+                    movie,
+                    cast.actorName(),
+                    cast.roleName()
+            );
+            movieCasts.add(movieCast);
+        }
+
+        movieCastRepository.saveAll(movieCasts);
 
         return MovieResponse.from(createdMovie);
     }

@@ -52,12 +52,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/v1/screenings",
-                                "/api/v1/screenings/**"
+                                "/api/v1/screenings/**",
+                                "/api/v1/rooms"
                         ).hasAnyRole("ADMIN", "THEATER_MANAGER")
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/screenings/**",
-                                "/api/v1/movies/**"
+                                "/api/v1/movies/**",
+                                "/api/v1/rooms/**"
                         ).hasAnyRole("ADMIN", "THEATER_MANAGER", "USER")
                         .anyRequest().authenticated()
                 )

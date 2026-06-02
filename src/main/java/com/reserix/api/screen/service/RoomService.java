@@ -4,6 +4,7 @@ import com.reserix.api.screen.dto.RoomCreateRequest;
 import com.reserix.api.screen.dto.RoomResponse;
 import com.reserix.api.screen.entity.Room;
 import com.reserix.api.screen.entity.Seat;
+import com.reserix.api.screen.entity.SeatType;
 import com.reserix.api.screen.repository.RoomRepository;
 import com.reserix.api.screen.repository.SeatRepository;
 import com.reserix.api.theater.entity.Theater;
@@ -43,17 +44,19 @@ public class RoomService {
 
             Room savedRoom = roomRepository.save(room);
 
-            List<Seat> seats = new ArrayList<>();
-            for (int row = 1; row <= request.rowCount(); row++) {
-                for (int col = 1; col <= request.columnCount(); col++) {
-                    Seat seat = new Seat(
+            List<Seat> seats = request.seats()
+                    .stream()
+                    .map(seatRequest -> new Seat(
                             savedRoom,
-                            row,
-                            col
-                    );
-                    seats.add(seat);
-                }
-            }
+                            seatRequest.rowNumber(),
+                            seatRequest.columnNumber(),
+                            seatRequest.rowLabel(),
+                            seatRequest.seatNumber(),
+                            seatRequest.seatType() == null ? SeatType.STANDARD : seatRequest.seatType(),
+                            seatRequest.active() == null ? true : seatRequest.active(),
+                            1
+                    ))
+                    .toList();
 
             seatRepository.saveAll(seats);
 

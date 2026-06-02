@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record MovieCreateRequest(
         @NotBlank(message = "Movie title is required")
@@ -35,6 +36,8 @@ public record MovieCreateRequest(
         @NotNull(message = "Release date is required")
         LocalDate releaseDate,
 
-        String trailerUrl
+        String trailerUrl,
+
+        List<MovieCastInfo> movieCasts
 ) {
 }
