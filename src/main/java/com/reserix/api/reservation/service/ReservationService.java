@@ -10,6 +10,7 @@ import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.reservation.entity.ReservationStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
+import com.reserix.api.reservation.websocket.SeatEventPublisher;
 import com.reserix.api.screen.dto.RoomResponse;
 import com.reserix.api.screen.entity.Screening;
 import com.reserix.api.screen.entity.ScreeningPrice;
@@ -47,6 +48,7 @@ public class ReservationService {
 
     private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
     private final SeatLockService seatLockService;
+    private final SeatEventPublisher seatEventPublisher;
 
     @Transactional(rollbackFor = Exception.class)
     public ReservationResponse createReservation(ReservationCreateRequest request, Long userId) {
@@ -131,6 +133,13 @@ public class ReservationService {
 
             List<ReservationSeat> savedReservationSeats = reservationSeatRepository.saveAll(reservationSeats);
 
+            seatEventPublisher.publish(
+                    screening.getId(),
+                    seatIds,
+                    "",
+                    ReservationSeatStatus.PENDING,
+                    userId
+            );
             return ReservationResponse.from(reservation, savedReservationSeats);
         } catch (DataIntegrityViolationException ex) {
             throw new IllegalArgumentException("The seats are already reserved");
