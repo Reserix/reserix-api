@@ -1,6 +1,7 @@
 package com.reserix.api.screen.controller;
 
 import com.reserix.api.common.response.ApiResponse;
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.screen.dto.RoomCreateRequest;
 import com.reserix.api.screen.dto.RoomResponse;
 import com.reserix.api.screen.service.RoomService;
@@ -36,8 +37,11 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RoomResponse>>> getRooms() {
+    public ResponseEntity<ApiResponse<PageResponse<RoomResponse>>> getRooms(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
         return ResponseEntity
-                .ok(ApiResponse.success(roomService.getRooms()));
+                .ok(ApiResponse.success(roomService.getRooms(page, size)));
     }
 }

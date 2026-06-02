@@ -1,5 +1,6 @@
 package com.reserix.api.screen.service;
 
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.screen.dto.RoomCreateRequest;
 import com.reserix.api.screen.dto.RoomResponse;
 import com.reserix.api.screen.entity.Room;
@@ -11,6 +12,10 @@ import com.reserix.api.theater.entity.Theater;
 import com.reserix.api.theater.repository.TheaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,13 +81,29 @@ public class RoomService {
     }
 
     // TODO: This part should be optimized using GroupBy
-    public List<RoomResponse> getRooms() {
-        return roomRepository.findAll()
+    public PageResponse<RoomResponse> getRooms(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("id").descending()
+        );
+
+        Page<Room> roomPage = roomRepository.findAll(pageable);
+
+        List<RoomResponse> content = roomPage.getContent()
                 .stream()
                 .map(room -> {
                     long seatCount = seatRepository.countByRoomId(room.getId());
                     return RoomResponse.from(room, seatCount);
                 })
                 .toList();
+
+        return new PageResponse<>(
+                content,
+                roomPage.getNumber(),
+                roomPage.getSize(),
+                roomPage.getTotalElements(),
+                roomPage.getTotalPages()
+        );
     }
 }
