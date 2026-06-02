@@ -10,6 +10,7 @@ import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.reservation.entity.ReservationStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
+import com.reserix.api.reservation.websocket.SeatEventPublisher;
 import com.reserix.api.screen.entity.*;
 import com.reserix.api.screen.repository.ScreeningRepository;
 import com.reserix.api.screen.repository.SeatRepository;
@@ -59,6 +60,9 @@ public class ReservationServiceTests {
 
     @Mock
     private SeatLockService seatLockService;
+
+    @Mock
+    private SeatEventPublisher seatEventPublisher;
 
     private User user;
     private Screening screening;
@@ -122,6 +126,14 @@ public class ReservationServiceTests {
 
     @Test
     void createReservation_success_shouldCreatePendingReservation() {
+        doNothing().when(seatEventPublisher).publish(
+                anyLong(),
+                anyList(),
+                anyString(),
+                any(ReservationSeatStatus.class),
+                anyLong()
+        );
+
         // given
         when(user.getId()).thenReturn(1L);
         // when(seat1.getId()).thenReturn(100L);
