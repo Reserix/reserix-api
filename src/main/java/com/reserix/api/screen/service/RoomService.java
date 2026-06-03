@@ -3,6 +3,7 @@ package com.reserix.api.screen.service;
 import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.screen.dto.RoomCreateRequest;
 import com.reserix.api.screen.dto.RoomResponse;
+import com.reserix.api.screen.dto.RoomSeatsResponse;
 import com.reserix.api.screen.entity.Room;
 import com.reserix.api.screen.entity.Seat;
 import com.reserix.api.screen.entity.SeatType;
@@ -58,7 +59,7 @@ public class RoomService {
                             seatRequest.rowLabel(),
                             seatRequest.seatNumber(),
                             seatRequest.seatType() == null ? SeatType.STANDARD : seatRequest.seatType(),
-                            seatRequest.active() == null ? true : seatRequest.active(),
+                            seatRequest.active() == null || seatRequest.active(),
                             1
                     ))
                     .toList();
@@ -75,7 +76,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
 
-        long seatCount = seatRepository.countByRoomId(room.getId());
+        long seatCount = seatRepository.countByRoomIdAndActive(room.getId(), true);
 
         return RoomResponse.from(room, seatCount);
     }
@@ -93,7 +94,7 @@ public class RoomService {
         List<RoomResponse> content = roomPage.getContent()
                 .stream()
                 .map(room -> {
-                    long seatCount = seatRepository.countByRoomId(room.getId());
+                    long seatCount = seatRepository.countByRoomIdAndActive(room.getId(), true);
                     return RoomResponse.from(room, seatCount);
                 })
                 .toList();
@@ -104,6 +105,28 @@ public class RoomService {
                 roomPage.getSize(),
                 roomPage.getTotalElements(),
                 roomPage.getTotalPages()
+        );
+    }
+
+    public RoomSeatsResponse getRoomSeats(Long roomId) {
+        List<RoomSeatsResponse.SeatLayoutResponse> contents = seatRepository.findSeatsByRoomId(roomId)
+                .stream()
+                .map(seat -> {
+                    return new RoomSeatsResponse.SeatLayoutResponse(
+                            seat.getRowNumber(),
+                            seat.getColumnNumber(),
+                            seat.getSeatType(),
+                            seat.getActive(),
+                            seat.getDisplayOrder(),
+                            seat.getRowLabel(),
+                            seat.getSeatLabel(),
+                            seat.getSeatNumber()
+                    );
+                }).toList();
+
+        return new RoomSeatsResponse(
+                roomId,
+                contents
         );
     }
 }

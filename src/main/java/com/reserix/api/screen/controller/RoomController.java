@@ -4,6 +4,7 @@ import com.reserix.api.common.response.ApiResponse;
 import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.screen.dto.RoomCreateRequest;
 import com.reserix.api.screen.dto.RoomResponse;
+import com.reserix.api.screen.dto.RoomSeatsResponse;
 import com.reserix.api.screen.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +44,13 @@ public class RoomController {
     ) {
         return ResponseEntity
                 .ok(ApiResponse.success(roomService.getRooms(page, size)));
+    }
+
+    @GetMapping("/{roomId}/seats")
+    public ResponseEntity<ApiResponse<RoomSeatsResponse>> getRoomSeats(
+        @PathVariable Long roomId
+    ) {
+        return ResponseEntity
+                .ok(ApiResponse.success(roomService.getRoomSeats(roomId)));
     }
 }

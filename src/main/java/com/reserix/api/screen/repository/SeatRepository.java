@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    long countByRoomId(Long roomId);
+    long countByRoomIdAndActive(Long roomId, Boolean active);
     List<Seat> findSeatsByRoomId(Long roomId);
 }
