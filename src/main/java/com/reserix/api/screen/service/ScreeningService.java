@@ -2,6 +2,7 @@ package com.reserix.api.screen.service;
 
 import com.reserix.api.common.exception.BusinessException;
 import com.reserix.api.common.exception.ErrorCode;
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.movie.entity.Movie;
 import com.reserix.api.movie.repository.MovieRepository;
 import com.reserix.api.reservation.entity.ReservationSeat;
@@ -16,6 +17,10 @@ import com.reserix.api.screen.repository.ScreeningPriceRepository;
 import com.reserix.api.screen.repository.ScreeningRepository;
 import com.reserix.api.screen.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,11 +85,28 @@ public class ScreeningService {
         return ScreeningResponse.from(screening);
     }
 
-    public List<ScreeningResponse> getAll() {
-        return screeningRepository.findAll()
+    public PageResponse<ScreeningResponse> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("id").descending()
+        );
+
+        Page<Screening> screeningPage = screeningRepository.findAll(pageable);
+
+        List<ScreeningResponse> contents = screeningPage
+                .getContent()
                 .stream()
                 .map(ScreeningResponse::from)
                 .toList();
+
+        return new PageResponse<>(
+                contents,
+                screeningPage.getNumber(),
+                screeningPage.getSize(),
+                screeningPage.getTotalElements(),
+                screeningPage.getTotalPages()
+        );
     }
 
     public ScreeningSeatResponse getSeatStatus(Long screeningId) {

@@ -1,6 +1,7 @@
 package com.reserix.api.screen.controller;
 
 import com.reserix.api.common.response.ApiResponse;
+import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.screen.dto.ScreeningCreateRequest;
 import com.reserix.api.screen.dto.ScreeningResponse;
 import com.reserix.api.screen.dto.ScreeningSeatResponse;
@@ -37,9 +38,12 @@ public class ScreeningController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ScreeningResponse>>> getAll() {
+    public ResponseEntity<ApiResponse<PageResponse<ScreeningResponse>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
         return ResponseEntity
-                .ok(ApiResponse.success(screeningService.getAll()));
+                .ok(ApiResponse.success(screeningService.getAll(page, size)));
     }
 
     @GetMapping("{screeningId}/seats")
