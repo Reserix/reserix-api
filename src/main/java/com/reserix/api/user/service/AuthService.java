@@ -35,7 +35,7 @@ public class AuthService {
                 user.getEmail()
         );
 
-        return new LoginResponse(accessToken, "Bearer");
+        return new LoginResponse(accessToken, "Bearer", user.getRole());
     }
 
     @Transactional
