@@ -37,7 +37,8 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/auth/register",
                                 "/actuator/health",
-                                "/actuator/prometheus"
+                                "/actuator/prometheus",
+                                "/api/v1/payments/mock/webhook"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
