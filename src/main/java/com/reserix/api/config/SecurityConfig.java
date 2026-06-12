@@ -33,6 +33,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/ws/**"
+                        ).permitAll()
+                        .requestMatchers(
                                 "/uploads/**",
                                 "/auth/login",
                                 "/auth/register",

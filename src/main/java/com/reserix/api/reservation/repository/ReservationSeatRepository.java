@@ -15,7 +15,7 @@ public interface ReservationSeatRepository extends JpaRepository<ReservationSeat
 
     List<ReservationSeat> findByReservationId(Long reservationId);
 
-    List<ReservationSeat> findReservationSeatsByScreening(Screening screening);
+    List<ReservationSeat> findReservationSeatsByScreeningAndStatusIn(Screening screening, Collection<ReservationSeatStatus> statuses);
 
     boolean existsByScreeningIdAndSeatIdAndStatusIn(
             Long screeningId,

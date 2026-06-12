@@ -6,6 +6,7 @@ import com.reserix.api.common.response.PageResponse;
 import com.reserix.api.movie.entity.Movie;
 import com.reserix.api.movie.repository.MovieRepository;
 import com.reserix.api.reservation.entity.ReservationSeat;
+import com.reserix.api.reservation.entity.ReservationSeatStatus;
 import com.reserix.api.reservation.repository.ReservationRepository;
 import com.reserix.api.reservation.repository.ReservationSeatRepository;
 import com.reserix.api.screen.dto.ScreeningCreateRequest;
@@ -114,7 +115,12 @@ public class ScreeningService {
                 .orElseThrow(() -> new IllegalArgumentException("Screening not found"));
 
         List<Seat> seats = seatRepository.findSeatsByRoomId(screening.getRoom().getId());
-        List<ReservationSeat> reservationSeats = reservationSeatRepository.findReservationSeatsByScreening(screening);
+        List<ReservationSeat> reservationSeats = reservationSeatRepository.findReservationSeatsByScreeningAndStatusIn(
+                screening,
+                List.of(
+                    ReservationSeatStatus.CONFIRMED,
+                    ReservationSeatStatus.PENDING
+        ));
 
         return ScreeningSeatResponse.from(screening, seats, reservationSeats);
     }
