@@ -1,0 +1,14 @@
+package com.reserix.api.chat.enums;
+
+public enum ChatIntent {
+    MOVIE_SEARCH,
+    SCREENING_SEARCH,
+    SEAT_STATUS_CHECK,
+    RESERVATION_HELP,
+    RESERVATION_LOOKUP,
+    RESERVATION_CANCEL_REQUEST,
+    PAYMENT_STATUS_CHECK,
+    FAQ,
+    GREETING,
+    UNKNOWN
+}
