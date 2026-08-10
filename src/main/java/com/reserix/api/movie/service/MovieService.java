@@ -95,4 +95,44 @@ public class MovieService {
                 moviePage.getTotalPages()
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<Movie> searchMovies(String keyword) {
+        String normalizedKeyword = normalizeKeyword(keyword);
+
+        return movieRepository.searchByKeyword(
+                normalizedKeyword,
+                PageRequest.of(0, 10)
+        );
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null) {
+            return "";
+        }
+
+        String value = keyword.trim();
+
+        if (value.isBlank()) {
+            return "";
+        }
+
+        /*
+         * Chatbot users often send full natural-language questions:
+         * "What movies today?"
+         * "show me movies"
+         *
+         * For these generic phrases, searching the literal full sentence is wrong.
+         * Return a broad movie list instead.
+         */
+        String lower = value.toLowerCase();
+
+        if (lower.contains("movie")
+                || lower.contains("movies")
+                || lower.contains("film")) {
+            return "";
+        }
+
+        return value;
+    }
 }
